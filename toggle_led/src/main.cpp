@@ -25,7 +25,8 @@
 class Button0 : public PinInput
 {
    public:
-    Button0(PinOutput *led) : PinInput(BUTTON_GPIO_CONTROLLER, BUTTON0_PIN), m_led(led)
+    Button0(u8_t *data, PinOutput *led)
+        : PinInput(data, BUTTON_GPIO_CONTROLLER, BUTTON0_PIN), m_led(led)
     {
     }
     int notify()
@@ -33,6 +34,7 @@ class Button0 : public PinInput
         PinInput::notify();
         printk("Button0 pressed!");
         m_led->toggle();
+        return 0;
     }
 
    private:
@@ -41,10 +43,10 @@ class Button0 : public PinInput
 
 int main(void)
 {
-    PinOutput led0(LED_PORT, LED);
-    Button0 b0(&led0);
+    PinOutput led0((u8_t *) alloca(1), LED_PORT, LED);
+    Button0 b0((u8_t *) alloca(1), &led0);
     GPIOController::instance()->init(&b0);
-    PinInput button1(BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
+    PinInput button1((u8_t *) alloca(1), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
     GPIOController::instance()->init(&button1);
 
     printk("Hello!\n");

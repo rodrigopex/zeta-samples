@@ -24,22 +24,27 @@ class Property
    public:
     virtual u8_t *data()
     {
-        return m_data
+        return m_data;
     }
     virtual int setData(u8_t *data, size_t size)
     {
         if (size == m_size) {
             memcpy(m_data, data, size);
+            return 0;
         }
+        return -EINVAL;
     }
-    virtual size_t size();
+    virtual size_t size()
+    {
+        return m_size;
+    }
     virtual int notify() = 0;
 
    protected:
-    u8_t m_changed;
-    u8_t m_flags;
     size_t m_size;
     u8_t *m_data;
+    u8_t m_changed;
+    u8_t m_flags;
 };
 
 class HardProperty : public Property
@@ -49,7 +54,10 @@ class HardProperty : public Property
     virtual u32_t pin()             = 0;
     virtual int configureFlags()    = 0;
     virtual int read(u8_t *state)   = 0;
-    virtual int write(u8_t state)   = 0;
+    virtual int write(u8_t state)
+    {
+        return 0;
+    }
 };
 
 class PinInput : public HardProperty
@@ -141,7 +149,7 @@ class PinOutput : public HardProperty
     }
     virtual int notify()
     {
-        printk("State changed to %d\n", m_state);
+        printk("State changed to %d\n", *m_data);
         return 0;
     }
     struct device *device()
