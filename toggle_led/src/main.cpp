@@ -20,7 +20,7 @@
 #include <misc/printk.h>
 #include <zephyr.h>
 
-#include "gpio_controller.hpp"
+#include "zeta.hpp"
 
 #define LED_PORT LED0_GPIO_CONTROLLER
 #define LED0 LED0_GPIO_PIN
@@ -32,18 +32,24 @@
 #define BUTTON3_PIN SW3_GPIO_PIN
 #define BUTTON_GPIO_CONTROLLER SW0_GPIO_CONTROLLER
 
+
+zt::GPIOController gpioController(BUTTON_GPIO_CONTROLLER,
+                                  [](struct device *dev, struct gpio_callback *cb,
+                                     u32_t pins) {
+                                      gpioController.notifyObservers(dev, pins);
+                                  });
+
 int main(void)
 {
-    GPIOController::instance()->init(BUTTON_GPIO_CONTROLLER);
     zt::DigitalOutput led0(ZT_ALLOC_BYTE(), LED_PORT, LED0);
     zt::DigitalOutput led1(ZT_ALLOC_BYTE(), LED_PORT, LED1);
     led0.connect(&led1, 'w');
     zt::DigitalInput button0(ZT_ALLOC_BYTES(1), BUTTON_GPIO_CONTROLLER, BUTTON0_PIN);
     button0.connect(&led0, 't');
-    GPIOController::instance()->add_callback(&button0);
+    gpioController.add_observer(&button0);
     zt::DigitalInput button1(ZT_ALLOC_BYTE(), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
     button1.connect(&led0, 't');
-    GPIOController::instance()->add_callback(&button1);
+    gpioController.add_observer(&button1);
 
     printk("Hello!\n");
     while (1) {
