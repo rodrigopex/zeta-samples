@@ -22,32 +22,28 @@
 
 #include "gpio_controller.hpp"
 
-class Button0 : public PinInput
-{
-   public:
-    Button0(u8_t *data, PinOutput *led)
-        : PinInput(data, BUTTON_GPIO_CONTROLLER, BUTTON0_PIN), m_led(led)
-    {
-    }
-    int notify()
-    {
-        PinInput::notify();
-        printk("Button0 pressed!");
-        m_led->toggle();
-        return 0;
-    }
+#define LED_PORT LED0_GPIO_CONTROLLER
+#define LED0 LED0_GPIO_PIN
+#define LED1 LED1_GPIO_PIN
 
-   private:
-    PinOutput *m_led;
-};
+#define BUTTON0_PIN SW0_GPIO_PIN
+#define BUTTON1_PIN SW1_GPIO_PIN
+#define BUTTON2_PIN SW2_GPIO_PIN
+#define BUTTON3_PIN SW3_GPIO_PIN
+#define BUTTON_GPIO_CONTROLLER SW0_GPIO_CONTROLLER
 
 int main(void)
 {
-    PinOutput led0((u8_t *) alloca(1), LED_PORT, LED);
-    Button0 b0((u8_t *) alloca(1), &led0);
-    GPIOController::instance()->init(&b0);
-    PinInput button1((u8_t *) alloca(1), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
-    GPIOController::instance()->init(&button1);
+    GPIOController::instance()->init(BUTTON_GPIO_CONTROLLER);
+    zeta::DigitalOutput led0(ZT_ALLOC_BYTE(), LED_PORT, LED0);
+    zeta::DigitalOutput led1(ZT_ALLOC_BYTE(), LED_PORT, LED1);
+    led0.connect(&led1, 'w');
+    zeta::DigitalInput button0(ZT_ALLOC_BYTES(1), BUTTON_GPIO_CONTROLLER, BUTTON0_PIN);
+    button0.connect(&led0, 't');
+    GPIOController::instance()->add_callback(&button0);
+    zeta::DigitalInput button1(ZT_ALLOC_BYTE(), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
+    button1.connect(&led0, 't');
+    GPIOController::instance()->add_callback(&button1);
 
     printk("Hello!\n");
     while (1) {
