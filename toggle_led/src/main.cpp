@@ -35,13 +35,13 @@
 int main(void)
 {
     GPIOController::instance()->init(BUTTON_GPIO_CONTROLLER);
-    zeta::DigitalOutput led0(ZT_ALLOC_BYTE(), LED_PORT, LED0);
-    zeta::DigitalOutput led1(ZT_ALLOC_BYTE(), LED_PORT, LED1);
+    zt::DigitalOutput led0(ZT_ALLOC_BYTE(), LED_PORT, LED0);
+    zt::DigitalOutput led1(ZT_ALLOC_BYTE(), LED_PORT, LED1);
     led0.connect(&led1, 'w');
-    zeta::DigitalInput button0(ZT_ALLOC_BYTES(1), BUTTON_GPIO_CONTROLLER, BUTTON0_PIN);
+    zt::DigitalInput button0(ZT_ALLOC_BYTES(1), BUTTON_GPIO_CONTROLLER, BUTTON0_PIN);
     button0.connect(&led0, 't');
     GPIOController::instance()->add_callback(&button0);
-    zeta::DigitalInput button1(ZT_ALLOC_BYTE(), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
+    zt::DigitalInput button1(ZT_ALLOC_BYTE(), BUTTON_GPIO_CONTROLLER, BUTTON1_PIN);
     button1.connect(&led0, 't');
     GPIOController::instance()->add_callback(&button1);
 

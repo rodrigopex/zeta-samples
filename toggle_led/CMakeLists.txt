@@ -8,13 +8,13 @@ list(APPEND HEADERS
     "${PROJECT_BINARY_DIR}/include/generated"
     "${PROJECT_BINARY_DIR}/zephyr/include/generated"
     "${PROJECT_SOURCE_DIR}/include"
-    "${PROJECT_SOURCE_DIR}/../zeta/include"
+    "${PROJECT_SOURCE_DIR}/../../zeta/include"
     )
 
 list(APPEND SOURCES
     "${PROJECT_SOURCE_DIR}/src/main.cpp"
-    "${PROJECT_SOURCE_DIR}/../zeta/src/gpio_controller.cpp"
-    "${PROJECT_SOURCE_DIR}/../zeta/src/property.cpp"
+    "${PROJECT_SOURCE_DIR}/../../zeta/src/gpio_controller.cpp"
+    "${PROJECT_SOURCE_DIR}/../../zeta/src/property.cpp"
     )
 
 include_directories(${HEADERS})
